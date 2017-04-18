@@ -1,30 +1,26 @@
-var innerW = window.innerWidth;
-  var innerH = window.innerHeight;
-  var gameRatio = innerW/innerH;
-  
-
-var game = new Phaser.Game(window.innerWidth*gameRatio, window.innerHeight*gameRatio ,Phaser.AUTO, 'gameDiv');
- //var game = new Phaser.Game(Math.ceil(1000*gameRatio), window.innerHeight, Phaser.AUTO, 'gameDiv');
-
-var isoTiles;
-var walls;
-var maali;
-var maaliGroup;
-var ball;
-var laxtoX, lahtoY, maaliX, maaliY ;
-var player;
-var elamat;
-var kenttaNumero;
-var ajastin;
-var totalTime;
-var levelTime;
-var labelAjastin;
-var labelTotalTime;
-var labelElamat;
-var labelLevels;
-var taulunOtsikot = ["Level", "Time"];
-var tulokset =[];
-var maxLevels=11;
+    var innerW = window.innerWidth;
+    var innerH = window.innerHeight;
+    var gameRatio = innerW/innerH;
+    var game = new Phaser.Game(window.innerWidth*gameRatio, window.innerHeight*gameRatio ,Phaser.AUTO, 'gameDiv');
+    var isoTiles;
+    var walls;
+    var maali;
+    var maaliGroup;
+    var ball;
+    var laxtoX, lahtoY, maaliX, maaliY ;
+    var player;
+    var elamat;
+    var kenttaNumero;
+    var ajastin;
+    var totalTime;
+    var levelTime;
+    var labelAjastin;
+    var labelTotalTime;
+    var labelElamat;
+    var labelLevels;
+    var taulunOtsikot = ["Level", "Time"];
+    var tulokset =[];
+    var maxLevels=11;
 
 var style = 
     { 
@@ -41,9 +37,10 @@ var style =
 }; 
 
 
-
-
-   var kentta2 =
+/********************************
+ * Define levels 
+ ********************************/
+var kentta2 =
     [
      "s000000000",
      "     0    ",    
@@ -59,7 +56,7 @@ var style =
     ];
 
 
-   var kentta1 =
+var kentta1 =
     [
      "    0s0   ",
      "     0    ",    
@@ -83,8 +80,6 @@ var style =
      "     0    ",
      "    0f0   ",
     ];
-
-
 
 
 var kentta6 =
@@ -118,9 +113,8 @@ var kentta4 =
      "0        0",
      "0000000000",
     ];
-    
 
-   var kentta3 =
+var kentta3 =
     [
      "s  00000000000",
      "0  0         0",
@@ -154,9 +148,7 @@ var kentta5 =
      "00000000000000",
     ];
 
-
-
-    var kentta7 =
+var kentta7 =
     [
      "s00000000      f",
      "000000000      0",    
@@ -176,10 +168,7 @@ var kentta5 =
      "         0000000",
     ];
 
-
-
-
-   var kentta10 =
+var kentta10 =
     [
      "s0000  f000000   ",
      "    00       0   ",    
@@ -244,239 +233,135 @@ var kentta9 =
      "0000000000",
     ];
 
+//-------------------------------------------------------
+//levels ends 
+//-------------------------------------------------------
 
+    var nykyinenKentta;
 
-
-var nykyinenKentta;
-
+//Phaser state bootState 
 var bootState ={
-    
-    
 };
 
 var preloadState ={
-    
     preload: function(){
-        
-    
-         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL ;
-		 game.scale.updateLayout();    
-        
-    game.load.image('board', 'board.png');
-    game.load.image('maali','finish.png')
-    game.load.image('ball', 'ball.png');
-    game.load.image('lippu','maali_lippu.png');   
-  
-        
+      game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL ;
+	  game.scale.updateLayout();    
+      game.load.image('board', 'board.png');
+      game.load.image('maali','finish.png')
+      game.load.image('ball', 'ball.png');
+      game.load.image('lippu','maali_lippu.png');   
     },
-    create: function(){
-      
-        //alert("Content loaded");
-        game.state.start('menu');
-        
-    },
-    
-};
 
+    create: function(){
+        game.state.start('menu');
+    },
+};
 var mainMenuState = {
-    
     create: function(){
         game.world.scale.set(1);
-        
-         game.stage.backgroundColor = '#FFFFFF';
+        game.stage.backgroundColor = '#FFFFFF';
         var text = "Mace 2.5D";
-        
         game.add.text(screen.width/2, 0, text, style);
-       this.input.onTap.addOnce(this.aloitaPeli, this);
-   
-        
+        this.input.onTap.addOnce(this.aloitaPeli, this);
     },
 
    aloitaPeli: function(){
-       
-       game.state.start('main');
-   }, 
-    
+     game.state.start('main');
+   },
 };
 
-var gameOverState ={
-    
+var gameOverState ={ 
     create:function(){
-       
-        
-        game.world.scale.set(1);
-        game.stage.backgroundColor = 'blue';
-        var text = "Game over";
-        
-     
-       game.add.text(100, 0, text, style);
-       tulostaTulokset();
-      
-       /*
-       var otsikkoTekstit = game.add.text(300,300,'',tauluStyle);
-           otsikkoTekstit.parseList(taulunOtsikot);
-
-       
-       
-       var tuloksetTekstit = game.add.text(300,450,'',tauluStyle);
-       tuloksetTekstit.parseList(tulokset);
-      */
-       
-
-       this.input.onTap.addOnce(restart, this);
-          
- },
-    
-
+    game.world.scale.set(1);
+    game.stage.backgroundColor = 'blue';
+    var text = "Game over";
+    game.add.text(100, 0, text, style);
+    tulostaTulokset();
+    this.input.onTap.addOnce(restart, this);
+     },
 };
 
 var gameState = {
-
-    
-    
     preload: function(){
       game.stage.backgroundColor='black';
-      
-        game.time.advancedTiming = true;
-
-        // Add and enable the plug-in.
-        game.plugins.add(new Phaser.Plugin.Isometric(game));
-        game.iso.anchor.setTo(0.2, 0.1);
-        game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
+      game.time.advancedTiming = true;
+      game.plugins.add(new Phaser.Plugin.Isometric(game));
+      game.iso.anchor.setTo(0.2, 0.1);
+      game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
       game.physics.isoArcade.gravity.setTo(0, 0, -500);
-  
+
   },
-    
+
     create: function(){
         tulokset=[];
         kenttaNumero = 1;
-        elamat = 3;    
+        elamat = 3;
         totalTime = 0;
         game.world.setBounds(0, 0, window.innerWidth+2000, window.innerHeight+2000);
         this.luoKentta();
         this.alustaOhjaus();
-        this.alustaAjastin();   
+        this.alustaAjastin();
         game.camera.x=game.width/2;game.camera.y=game.height/2;
-      
-  game.world.scale.set(2.0);
-
-     if(game.device.desktop)
-     {
-game.world.scale.set(2.5);
-     }
-     
-
-     if(game.device.iOS)
-     {
-        game.world.scale.set(1.5);   
-     }
- 
-    if(game.device.android)
-    {
         game.world.scale.set(2.0);
-
+        if(game.device.desktop){
+          game.world.scale.set(2.5);
+         }
+        if(game.device.iOS) {
+          game.world.scale.set(1.5);
+        }
+    if(game.device.android) {
+        game.world.scale.set(2.0);
     }
 
 },
-    
     alustaOhjaus: function(){
-       
-         if (window.DeviceOrientationEvent) {
-             console.log("DeviceOrientation is supported");
-       
+       if (window.DeviceOrientationEvent) {
+          console.log("DeviceOrientation is supported");
           window.addEventListener("deviceorientation",this.handleOrientation);
-    }
-        else {
-             console.error("This browser do not support DeviceOrientation");
-                }
-        
-     this.cursors = game.input.keyboard.createCursorKeys();
+         }
+       else {
+        console.error("This browser do not support DeviceOrientation");
+            }
+        this.cursors = game.input.keyboard.createCursorKeys();
         this.game.input.keyboard.addKeyCapture([
-            Phaser.Keyboard.LEFT,
-            Phaser.Keyboard.RIGHT,
-            Phaser.Keyboard.UP,
-            Phaser.Keyboard.DOWN,
-            Phaser.Keyboard.SPACEBAR
+        Phaser.Keyboard.LEFT,
+        Phaser.Keyboard.RIGHT,
+        Phaser.Keyboard.UP,
+        Phaser.Keyboard.DOWN,
+        Phaser.Keyboard.SPACEBAR
         ]);
-                
-    },
-    
-   
-   handleOrientation: function(e){
-       
+  },
+
+    handleOrientation: function(e){
         var x = e.gamma*9;
         var y = e.beta*9;
         player.body.velocity.x = x;
         player.body.velocity.y = y;
         player.body.maxVelocity.x= 200;
         player.body.maxVelocity.y= 200;
-
 },
-    
-    
     alustaAjastin:function(){
         ajastin= game.time.create(false);
         ajastin.loop(1000, this.lisaaAikaa, this);
         ajastin.start();
-        
     },
-    
     lisaaAikaa:function(){
         levelTime++;
         totalTime++;
         labelAjastin.text = "Time: "+ levelTime;
         labelTotalTime.text = "Total time: "+ totalTime;        
-        
+
     },
-    
-    
-  update: function(){
-    
-        
-        if(player.body.z<-500)
-            {
-            this.palloTippui();            
+
+    update: function(){
+      if(player.body.z<-500)
+        {
+          this.palloTippui();            
           }
-     var speed = 400;
-     player.body.acceleration.y = 0;
-     player.body.acceleration.x = 0;       
-/*
-    if (game.input.mousePointer.isDown){
-         if (game.input.activePointer.x < player.x) {    
-            player.body.velocity.x =-100;
-         }
-              else if (game.input.activePointer.x > player.x) {     
-                  console.log("vasemmalle");
-                  player.body.velocity.x = 100;
-
-                 }
-
-                 else{
-
-                     player.body.velocity.x = 0;
-                 }
-       if(game.input.activePointer.y < player.y){
-          // console.log("ylös");
-           player.body.velocity.y = -100;
-       }
-    
-    else if(game.input.activePointer.y > player.y){
-        //console.log("alas");
-         player.body.velocity.y = 100;
-
-    }
-
-                 else{
-
-                     player.body.velocity.y = 0;
-                 }
-
-    
-    
-    }
-
-
-    */
+       var speed = 400;
+       player.body.acceleration.y = 0;
+       player.body.acceleration.x = 0;       
         if (this.cursors.up.isDown) {
             player.body.acceleration.y -= speed;
         }
@@ -501,20 +386,15 @@ game.world.scale.set(2.5);
     
     palloTippui:function(){
       player.body.velocity.x=0;
-        player.body.velocity.y=0;
-        elamat--;
-        if(elamat<1)   game.state.start('gameOver');          
-         player.body.x= lahtoX;
-        player.body.y=lahtoY;
+      player.body.velocity.y=0;
+      elamat--;
+      if(elamat<1)   game.state.start('gameOver');          
+      player.body.x= lahtoX;
+      player.body.y=lahtoY;
+      player.body.z = 5;
+      labelElamat.text = 'Balls:'+ elamat;
 
-        
-                
-        player.body.z = 5;
-       labelElamat.text = 'Balls:'+ elamat;
-    
     },
-    
-    
     palloTuliMaaliin:function(){
         
       alert("Pallo maalisssa");  
