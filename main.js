@@ -1,3 +1,14 @@
+    /*   
+    Author: Petri Lamminaho 
+    Maze Maddness HTML 5 2.5D game 
+    MArble Maddness clone
+    Uses Phaser.js and Phaser isometric plugin   
+    Uses mobile device's acceleration sensor  to control the ball 
+    made summer/fall 2016 
+   file: main.js 
+*/
+    
+    
     var innerW = window.innerWidth;
     var innerH = window.innerHeight;
     var gameRatio = innerW/innerH;
@@ -353,7 +364,6 @@ var gameState = {
         labelTotalTime.text = "Total time: "+ totalTime;        
 
     },
-
     update: function(){
       if(player.body.z<-500)
         {
@@ -363,28 +373,27 @@ var gameState = {
        player.body.acceleration.y = 0;
        player.body.acceleration.x = 0;       
         if (this.cursors.up.isDown) {
-            player.body.acceleration.y -= speed;
+          player.body.acceleration.y -= speed;
         }
         else if (this.cursors.down.isDown) {
-            player.body.acceleration.y += speed;
+          player.body.acceleration.y += speed;
         }
         else {
-            player.body.acceleration.y = 0;
+          player.body.acceleration.y = 0;
         }
-           if (this.cursors.left.isDown) {
-            player.body.acceleration.x -= speed;
+        if(this.cursors.left.isDown) {
+          player.body.acceleration.x -= speed;
         }
         else if (this.cursors.right.isDown) {
-            player.body.acceleration.x += speed;
+          player.body.acceleration.x += speed;
         }
-        else {
-            player.body.acceleration.x = 0;
-        }                
-     game.physics.isoArcade.collide(isoTiles);                 
-     game.physics.isoArcade.overlap(maali,player,this.palloTuliMaaliin,null,this);    
+        else{
+          player.body.acceleration.x = 0;
+         }
+       game.physics.isoArcade.collide(isoTiles);
+       game.physics.isoArcade.overlap(maali,player,this.palloTuliMaaliin,null,this);
     },
-    
-    palloTippui:function(){
+     palloTippui:function(){
       player.body.velocity.x=0;
       player.body.velocity.y=0;
       elamat--;
@@ -393,220 +402,139 @@ var gameState = {
       player.body.y=lahtoY;
       player.body.z = 5;
       labelElamat.text = 'Balls:'+ elamat;
-
     },
+
     palloTuliMaaliin:function(){
-        
-      alert("Pallo maalisssa");  
+      alert("Pallo maalisssa");
       var tulos = "Level" + kenttaNumero+" "+levelTime + " sec";
       tulokset.push([tulos]);
       game.world.removeAll();
       kenttaNumero++;
-      this.luoKentta();   
+      this.luoKentta();
     },
-    
     valitseKentta: function(){
-
       switch(kenttaNumero){
-              
-          case 1: nykyinenKentta = kentta1;
-              break;
-
-          case 2: nykyinenKentta = kentta2;
-              break;
-
-          case 3: nykyinenKentta = kentta3;
-              break;
-
-          case 4: nykyinenKentta = kentta4;
-              break;
-
-          case 5: nykyinenKentta = kentta5;
-              break;
-         
+        case 1: nykyinenKentta = kentta1;
+            break;
+        case 2: nykyinenKentta = kentta2;
+            break;
+        case 3: nykyinenKentta = kentta3;
+            break;
+        case 4: nykyinenKentta = kentta4;
+            break;
+        case 5: nykyinenKentta = kentta5;
+            break;
         case 6: nykyinenKentta = kentta6;
              break;
-
         case 7: nykyinenKentta = kentta7;
              break;
-        
-         case 8: nykyinenKentta = kentta8;
+        case 8: nykyinenKentta = kentta8;
              break;
-        
-          case 9: nykyinenKentta = kentta9;
-               break;
-          
-          case 10: nykyinenKentta = kentta10;
-                 break;    
-          
-          case 11: nykyinenKentta = kentta11;
+        case 9: nykyinenKentta = kentta9;
+            break;
+        case 10: nykyinenKentta = kentta10;
+            break;    
+        case 11: nykyinenKentta = kentta11;
           default:
               this.peliLapaisty();          
-      }  
-        
-    },
-    
-    
+    }
+
+  },
     peliLapaisty:function(){
-       game.state.start('gameOver');        
-          
+       game.state.start('gameOver');
     },
-    
+
    luoKentta:function(){
        levelTime =0;
        this.valitseKentta();
-       isoTiles = game.add.group();  
-       ball = game.add.group();  
-        maaliGroup = game.add.group();
-      
-       
-       
-       
-       
+       isoTiles = game.add.group();
+       ball = game.add.group();
+       maaliGroup = game.add.group();
        var tile;
-       //var wall;
        var kenttaJono ="";
-    
        for(var i=0; i<nykyinenKentta.length; i++)
        {
-           var jono = nykyinenKentta[i];
-         for (var j=0; j<jono.length; j++)
-            {
-             var merkki = jono[j];
-        if(merkki=="0"){     
-          
+          var jono = nykyinenKentta[i];
+       for (var j=0; j<jono.length; j++){
+          var merkki = jono[j];
+            if(merkki=="0"){
                 tile = game.add.isoSprite(j*38,i*38,0,'board',0,isoTiles);
-            
-          game.physics.isoArcade.enable(tile);
-           tile.body.moves = false;
-						tile.body.immovable = true;
-
-                      tile.anchor.set(0.5, 0);
-                    //  tile.scale.set(2);      
-    
-
-  }
-
-                else if(merkki=='s'){
-                    
-                tile = game.add.isoSprite(j*38,i*38,0,'board',0,isoTiles);
-                 game.physics.isoArcade.enable(tile);
-                      tile.body.moves = false;
-						tile.body.immovable = true;
-
-                      tile.anchor.set(0.5, 0);
-                      lahtoX = j*38;
-                       lahtoY = i*38;
-                    
+                game.physics.isoArcade.enable(tile);
+                tile.body.moves = false;
+				tile.body.immovable = true;
+                tile.anchor.set(0.5, 0);
                 }
-                
+            else if(merkki=='s'){
+                tile = game.add.isoSprite(j*38,i*38,0,'board',0,isoTiles);
+                 game.physics.isoArcade.enable(tile);
+                tile.body.moves = false;
+				tile.body.immovable = true;
+                tile.anchor.set(0.5, 0);
+                lahtoX = j*38;
+                lahtoY = i*38;
+                }
             else if(merkki=='f'){
-                /*
-                  tile = game.add.isoSprite(j*38,i*38,0,'maali',0,isoTiles);
-                 game.physics.isoArcade.enable(tile);
-                      tile.body.moves = false;
-						tile.body.immovable = true;
-                        
-                        */
-            
-                tile = game.add.isoSprite(j*38,i*38,0,'maali',0,isoTiles);
-                 game.physics.isoArcade.enable(tile);
-                      tile.body.moves = false;
-						tile.body.immovable = true;
-
-                      tile.anchor.set(0.5, 0);
-                
-                
-                
-                maaliX=j*38;
-                maaliY=i*38;      
-                
-    maali = game.add.isoSprite(maaliX,maaliY, 0,'lippu',0,maaliGroup);
-      game.physics.isoArcade.enable(maali);
-	        maali.body.collideWorldBounds = true;
-	        maali.anchor.set(0.5, 0);
-	        //maali.alpha=0,5;
-            
-            
+              tile = game.add.isoSprite(j*38,i*38,0,'maali',0,isoTiles);
+              game.physics.isoArcade.enable(tile);
+              tile.body.moves = false;
+			  tile.body.immovable = true;
+              tile.anchor.set(0.5, 0);
+              maaliX=j*38;
+              maaliY=i*38;
+              maali = game.add.isoSprite(maaliX,maaliY, 0,'lippu',0,maaliGroup);
+              game.physics.isoArcade.enable(maali);
+	          maali.body.collideWorldBounds = true;
+	          maali.anchor.set(0.5, 0);
             }
-            
-            
-            }
-       
-       
-       
-      
-
-       
-       }
-               
-              
-   player = game.add.isoSprite(lahtoX, lahtoY, 15,'ball',0, isoTiles);
-       
-       
-   game.physics.isoArcade.enable(player);
-     player.body.bounce.set(0.7, 0.7);
+        }
+     }
+    player = game.add.isoSprite(lahtoX, lahtoY, 15,'ball',0, isoTiles);
+    game.physics.isoArcade.enable(player);
+    player.body.bounce.set(0.7, 0.7);
     player.body.drag.x=50;
     player.body.drag.y=50;
-    
-     game.camera.follow(player);
-
-  //   isoTiles.scale.set(1.7,1.7, 1.7);
-    // maaliGroup.scale.set(1.7, 1.7, 1.7);
-
+    game.camera.follow(player);
     labelAjastin = game.add.text(20, 40,'Time:',{font: "30px Arial", fill: "#ffffff"});   
     labelTotalTime = game.add.text(20, 150, 'Total time:'+totalTime,{font: "20px Arial", fill: "#ffffff"});
     labelElamat = game.add.text(300,80,'Balls:' + elamat, {font: "30px Arial", fill: "#ffffff"} )
     labelLevels = game.add.text(600,80,'Level:'+kenttaNumero+" /"+maxLevels, {font: "30px Arial", fill: "#ffffff"} );
-
-      labelAjastin.fixedToCamera = true;
-      labelAjastin.cameraOffset.setTo(20,40); 
-      labelTotalTime.fixedToCamera = true;
-      labelTotalTime.cameraOffset.setTo(20,150);
-      labelElamat.fixedToCamera = true;
-      labelElamat.cameraOffset.setTo(screen.width-10,80);
-      labelLevels.fixedToCamera = true;
-      labelLevels.cameraOffset.setTo(screen.width-10, 150);
-
+    labelAjastin.fixedToCamera = true;
+    labelAjastin.cameraOffset.setTo(20,40); 
+    labelTotalTime.fixedToCamera = true;
+    labelTotalTime.cameraOffset.setTo(20,150);
+    labelElamat.fixedToCamera = true;
+    labelElamat.cameraOffset.setTo(screen.width-10,80);
+    labelLevels.fixedToCamera = true;
+    labelLevels.cameraOffset.setTo(screen.width-10, 150);
  },
-    
-          
 };
 
-
-
-var gameCompliteState={  
-    
-    create:function(){
-
-        game.stage.backgroundColor = '#FFFFFF';
-        var textGameComplete = "Game completed";
-        game.add.text(100, 0, textGameComplete, style);
-        tulostaTulokset();
-         var textTotalTime = "Your total time is: " + totalTime + "seconds";
-        this.input.onTap.addOnce(restart, this);
-    },        
+    var gameCompliteState={  
+       create:function(){
+          game.stage.backgroundColor = '#FFFFFF';
+          var textGameComplete = "Game completed";
+          game.add.text(100, 0, textGameComplete, style);
+          tulostaTulokset();
+          var textTotalTime = "Your total time is: " + totalTime + "seconds";
+          this.input.onTap.addOnce(restart, this);
+    },
 };
 
-
-function restart(){
-    
-    game.state.start('menu');    
+    function restart(){
+     game.state.start('menu');
 }
 
-function tulostaTulokset(){
-             
+    function tulostaTulokset(){
        var otsikkoTekstit = game.add.text(300,300,'',tauluStyle);
            otsikkoTekstit.parseList(taulunOtsikot); 
        var tuloksetTekstit = game.add.text(300,450,'',tauluStyle);
            tuloksetTekstit.parseList(tulokset);      
 }
 
-
-game.state.add('main', gameState);  
-game.state.add('boot', bootState);
-game.state.add('preload', preloadState);
-game.state.add('menu', mainMenuState);
-game.state.add('gameOver', gameOverState);
-game.state.add('gameComplete',gameCompliteState);
-game.state.start('preload');  
+    game.state.add('main', gameState);  
+    game.state.add('boot', bootState);
+    game.state.add('preload', preloadState);
+    game.state.add('menu', mainMenuState);
+    game.state.add('gameOver', gameOverState);
+    game.state.add('gameComplete',gameCompliteState);
+    game.state.start('preload');  
